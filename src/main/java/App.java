@@ -1,8 +1,3 @@
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
 import java.io.IOException;
 
 public class App {
@@ -16,13 +11,26 @@ public class App {
     public static void main(String[] args) {
         String mainUrl = "";
 
-        mainUrl = "https://w32.readheroacademia.com/";
+        //Naruto
+        //mainUrl = "https://ww5.mangakakalot.tv/manga/manga-ng952689";
+        //Vagabond
+        //mainUrl = "https://ww5.mangakakalot.tv/manga/manga-je954913";
+        //Shaman King
+        //mainUrl = "https://ww5.mangakakalot.tv/manga/manga-id957386";
+        //Bleach
+        //mainUrl = "https://ww5.mangakakalot.tv/manga/manga-qq951425";
+        //Berserk
+        //mainUrl ="https://ww5.mangakakalot.tv/manga/manga-ma952557";
+        //Prison school
+        //mainUrl="https://ww5.mangakakalot.tv/manga/manga-nl952268";
+        //MyHeroAcademia
+        mainUrl = "https://ww5.mangakakalot.tv/manga/manga-jq951973";
 
         App app = new App();
         try {
-            app.fillChaptersList(mainUrl);
+            app.getChapters().fill(mainUrl);
+            //app.getChapters().setChapterBound(30,70);
             app.getChapters().listChapters();
-            app.getChapters().setChapterBound(30,70);
             System.out.println(app.getChapters().getRandomPage());
 
         } catch (IOException e) {
@@ -32,22 +40,5 @@ public class App {
     public Chapters getChapters(){
         return chapters;
     }
-    public void fillChaptersList(String url) throws IOException {
-        Document page = Jsoup.connect(url).get();
-        Elements chaptersTable = page.getElementsByClass("chap_tab")
-                .get(0).getElementsByTag("tr");
 
-        for(Element tableRow: chaptersTable){
-            Chapter chapter = getChapterFromTableRow(tableRow);
-            chapters.addChapter(chapter);
-        }
-    }
-
-    public Chapter getChapterFromTableRow(Element tableRow){
-        String url = tableRow.getElementsByTag("a").get(0).attr("href");
-        String title = tableRow.getElementsByTag("td").get(0).text();
-
-        Chapter result = new Chapter(title,url);
-        return result;
-    }
 }

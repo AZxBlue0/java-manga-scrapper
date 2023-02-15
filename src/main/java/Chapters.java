@@ -1,3 +1,6 @@
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
@@ -10,7 +13,7 @@ public class Chapters {
     int maxChapter =0, minChapter =0;
 
     public void init() {
-        chapters = new ArrayList<Chapter>();
+        chapters = new ArrayList<>();
     }
 
     public Chapters() {
@@ -36,7 +39,7 @@ public class Chapters {
     }
 
     private void checkBounds(int minimumValue, int maximumValue) throws IllegalArgumentException{
-        if (minimumValue > maximumValue) {
+        if (minimumValue >= maximumValue) {
             throw new IllegalArgumentException("Min value is greater than max value");
         }
     }
@@ -53,4 +56,26 @@ public class Chapters {
             System.out.println(i+"\t"+chapters.get(i).title);
         }
     }
+
+    private String getBaseUrl(String url){
+        int firstSlash = url.indexOf("/", 8);
+        return url.substring(0,firstSlash);
+    }
+
+    public void fill(String url) throws IOException {
+        Document page = Jsoup.connect(url).get();
+        Elements chaptersTable = page.getElementsByClass("chapter-list")
+                        .get(0).getElementsByTag("div");
+        String baseUrl = getBaseUrl(url);
+        for(Element tableRow: chaptersTable){
+            String chaptersUrl = baseUrl+tableRow.getElementsByTag("a").get(0).attr("href");
+            String title = tableRow.getElementsByTag("span").get(0).text();
+                     addChapter(new Chapter(title,chaptersUrl));
+                     this.maxChapter++;
+
+        }
+
+    }
+
 }
+
